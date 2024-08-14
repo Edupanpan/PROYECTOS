@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .featured-post, .second-favorite, .recent-posts, .categories {
+            background: #fff;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+        .featured-post img, .second-favorite img, .recent-posts img, .categories img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Personal Blog</h1>
+    </header>
+    <main class="container">
+        <article class="featured-post">
+            <h2 class="section-title">Featured Post</h2>
+            <img src="featured-image.jpg" alt="Featured Post Image">
+            <p>Descripción de la publicación destacada.</p>
+        </article>
+        <article class="second-favorite">
+            <h2 class="section-title">My Second Favorite</h2>
+            <img src="second-favorite-image.jpg" alt="Second Favorite Post Image">
+            <p>Descripción de mi segunda publicación favorita.</p>
+        </article>
+        <section class="recent-posts">
+            <h2 class="section-title">Recent Posts</h2>
+            <img src="recent-posts-image.jpg" alt="Recent Posts Image">
+            <p>Descripción de las publicaciones recientes.</p>
+        </section>
+        <aside class="categories">
+            <h2 class="section-title">Categories</h2>
+            <img src="categories-image.jpg" alt="Categories Image">
+            <p>Descripción de las categorías.</p>
+        </aside>
+    </main>
+    <footer>
+        <p>© 2024 Personal Blog. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
