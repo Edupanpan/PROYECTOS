@@ -33,5 +33,14 @@ class AnalisisDatos:
     def get_valoresnull(self):
         if self.data is not None:
             return self.data.isnull().sum()
-        
-#tengo 52 valores nulos de salario, decidir si eliminarlos o poner media o moda
+    
+    def mostrarnulos(self, columna):
+        if self.data is not None:
+            promedio=self.data[columna].mean()
+            #return self.data[columna].fillna(promedio)
+            return self.data[self.data[columna].isnull()]
+    def get_columnas(self):
+        if self.data is not None:
+            return self.data.columns.values
+            
+#presentar variables que se pueden modificar en los valores nulos
