@@ -48,6 +48,9 @@ def menu():
 
             st.divider()
             get_grafico(BD)
+            
+            st.divider()
+            get_outliers(BD)
                 
             
                 
@@ -117,4 +120,10 @@ def get_grafico(BD):
     column = st.selectbox("Seleccione una columna para graficar",columns)
     if st.button("Ver gráfico"):
         BD.get_grafico(column)
+def get_outliers(BD):
+    st.write("Outliers")
+    columns= st.session_state.data.columns
+    column = st.selectbox("Seleccione una columna para detectar outliers",columns)
+    if st.button("Detectar Outliers"):
+        BD.get_outlier(column)
     

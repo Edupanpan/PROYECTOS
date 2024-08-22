@@ -1,5 +1,4 @@
 import pandas as pd
-from io import StringIO
 import streamlit as st
 import matplotlib.pyplot as plt
 
@@ -124,8 +123,6 @@ class AnalisisDatos:
     def get_grafico(self,column):
             
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8))
-
-            # Gráfico de barras para 'Salary'
             if 'Salary' in column:
                 ax1.bar(st.session_state.data['ID'], st.session_state.data['Salary'], alpha=0.7)
                 ax1.set_xlabel('ID')
@@ -134,8 +131,6 @@ class AnalisisDatos:
                 ax1.grid(True)
             else:
                 ax1.set_visible(False)  # Ocultar el eje si no hay datos
-
-            # Gráfico de barras para 'Age'
             if 'Age' in column:
                 ax2.bar(st.session_state.data['ID'], st.session_state.data['Age'], alpha=0.7)
                 ax2.set_xlabel('ID')
@@ -145,5 +140,17 @@ class AnalisisDatos:
             else:
                 ax2.set_visible(False)  # Ocultar el eje si no hay datos
 
-            # Mostrar los gráficos en Streamlit
-            st.pyplot(fig)
+            st.pyplot(fig)# Mostrar los gráficos en Streamlit
+    def get_outlier(self,column):
+        edad=st.session_state.data[column]
+        Q1 = st.session_state.data[column].quantile(0.25)
+        Q3 = st.session_state.data[column].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        st.dataframe(st.session_state.data[(st.session_state.data[column] < lower_bound) | (st.session_state.data[column] > upper_bound)])
+        fig, ax = plt.subplots()
+        ax.boxplot(edad, vert=False)
+        ax.set_title('Boxplot de edades')
+        ax.set_xlabel('Edad')
+        st.pyplot(fig)
