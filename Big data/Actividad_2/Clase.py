@@ -4,143 +4,130 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 class AnalisisDatos:
-    
     def __init__(self, CsvUploud=None):
-        self.data = CsvUploud
+        self.data = None
+        self.csv_upload = CsvUploud
+    
     def load_data(self):
-        if self.file and self.file.name.endswith('.csv'):
-            st.session_state.data = pd.read_csv(self.file)
+        if self.csv_upload and self.csv_upload.name.endswith('.csv'):
+            self.data = pd.read_csv(self.csv_upload)
+            st.session_state.data = self.data
         else:
             st.error("Formato de archivo no soportado.")
 
     def get_datos(self):
-        return self.data
+        st.dataframe(st.session_state.data)
     
     def get_head(self, n=20):
-        if self.data is not None:
-            return self.data.head(n)
+        st.dataframe(st.session_state.data.head(n))
     
     def get_tail(self, n=20):
-        if self.data is not None:
-            return self.data.tail(n) 
-
-    def get_info(self):
-        if self.data is not None:
-            buffer = StringIO()#revisar blockde notas
-            self.data.info(buf=buffer)
-            return buffer.getvalue()
+        st.dataframe(st.session_state.data.tail(n))
     
     def get_describe(self):
-        if self.data is not None:
-            return self.data.describe(include='all')
+        st.dataframe(st.session_state.data.describe())
+    def get_column_null(self):
+        st.dataframe(st.session_state.data.isnull().sum())
+    def get_valoresnull(self,column):
+        global ID_new
+        ID_null=st.session_state.data[st.session_state.data[column].isnull()].index.tolist()
+        ID_new=ID_null
+        st.dataframe(st.session_state.data.loc[ID_null])  
+         
+    def cambiarnulos(self, column,valor):
+            st.dataframe(st.session_state.data.isnull().sum()) 
+            if valor == "Moda":
+                mode=self.get_mode(column)
+                st.session_state.data[column].fillna(mode, inplace=True)
+            elif valor == "Media":
+                mean=self.get_mean(column)
+                st.session_state.data[column].fillna(mean, inplace=True)
+            elif valor == "Mediana":
+                median=self.get_median(column)
+                st.session_state.data[column].fillna(median, inplace=True)
+            st.dataframe(st.session_state.data.loc[ID_new])
 
     def get_columnas(self):
-        if self.data is not None:
-            return self.data.columns.values
+        st.dataframe(st.session_state.data.columns.values)
+            
+    
+    
+
+    def get_mean(self,column):
+        return st.session_state.data[column].mean()
+    def get_mode(self,column):
+        return st.session_state.data[column].mode()
+    def get_median(self,column):
+        return st.session_state.data[column].median()
+    def get_var(self,column):
+        return st.session_state.data[column].var()
+    def get_std(self,column):
+        return st.session_state.data[column].std()
+    def get_range(self,column):
+        return st.session_state.data[column].quantile(0.75)-st.session_state.data[column].quantile(0.25)
+        
     
     def get_types(self):
-        if self.data is not None:
-            return self.data.dtypes
+        st.dataframe(st.session_state.data.dtypes)
     
-    def get_valoresnull(self):
-        if self.data is not None:
-            return self.data.isnull().sum()
-        
-    def get_media(self,columna):
-        if self.data is not None:
-            return self.data[columna].fillna(self.data[columna].mean())
-    def get_moda(self,columna):
-        if self.data is not None:
-            return self.data[columna].fillna(self.data[columna].mode()[0])
-    def get_mediana(self,columna):
-        if self.data is not None:
-            return self.data[columna].fillna(self.data[columna].median())
-        
-    def cambiarnulos(self, columna,valor):
-        # if self.data is not None:
-        #     if columna in self.data.columns:
-        #         self.data[columna].fillna(valor, inplace=True)
-        #         return self.data
-        #     else:
-        #         raise KeyError(f"La columna '{columna}' no existe en el DataFrame.")
-        # else:
-        #     raise ValueError("El DataFrame no ha sido cargado.")
-        if self.data is not None:
-            ids_nulos = self.data[self.data[columna].isnull()].index.tolist()
-            filas_antes = self.data.loc[ids_nulos]
-            if valor == "Moda":
-                self.data[columna] = self.get_moda(columna)
-            elif valor == "Media":
-                self.data[columna] = self.get_media(columna)
-            elif valor == "Mediana":
-                self.data[columna] = self.get_mediana(columna)
-            filas_despues = self.data.loc[ids_nulos]
-            return filas_despues
-
-    
-    def cambioTipo(self, columna, tipo):#cambiar tipos de datos de columnas
-        if self.data is not None:
+    def cambioTipo(self, column, tipo):#cambiar tipos de datos de columnas
             if tipo == "int":
-                self.data[columna] = self.data[columna].fillna(0)
-                self.data[columna] = self.data[columna].astype(int)
-                self.set_moneda(columna)
+                st.dataframe(st.session_state.data[column].astype(int))
 
             elif tipo == "float":
-                self.data[columna] = self.data[columna].fillna(0)   
-                self.data[columna] = self.data[columna].astype(float)
-                self.set_moneda(columna)
+                st.dataframe(st.session_state.data[column].astype(float))
             elif tipo == "object":
-                self.data[columna] = self.data[columna].fillna("Sin definir")
-                self.data[columna] = self.data[columna].astype(str)
+                st.dataframe(st.session_state.data[column].astype(object))
             elif tipo == "datetime64[ns]":
-                self.data[columna] = self.data[columna].fillna("2021-01-01")
-                self.data[columna] = pd.to_datetime(self.data[columna], format='mixed')            
-            return self.data  
+                st.session_state.data[column] = pd.to_datetime(st.session_state.data[column], format='mixed')           
+            st.dataframe(st.session_state.data)
 
-    def set_moneda(self, columna):#funcion para cambiar moneda de alguna columna de salario si existe
-        if self.data is not None:
-            valores=st.selectbox("Seleccione moneda a cambiar",["","Usd-Clp","Clp-Usd","Eur-Usd","Eur-Clp","Usd-Eur","Clp-Eur"])
+    def set_moneda(self, column,valores):#funcion para cambiar moneda de alguna columna de salario si existe
             if valores=="Usd-Clp":
-                self.data[columna]=self.data[columna]*924
+                st.session_state.data[column]=st.session_state.data[column]*924
+                st.dataframe(st.session_state.data[column])
             elif valores=="Clp-Usd":
-                self.data[columna]=self.data[columna]/924
+                st.session_state.data[column]=st.session_state.data[column]/924
+                st.dataframe(st.session_state.data[column])
             elif valores=="Eur-Usd":
-                self.data[columna]=self.data[columna]*1.11
+                st.session_state.data[column]=st.session_state.data[column]*1.11
+                st.dataframe(st.session_state.data[column])
             elif valores=="Usd-Eur":
-                self.data[columna]=self.data[columna]/1.11
+                st.session_state.data[column]=st.session_state.data[column]/1.11
+                st.dataframe(st.session_state.data[column])
             elif valores=="Eur-Clp":
-                self.data[columna]=self.data[columna]*1027
+                st.session_state.data[column]=st.session_state.data[column]*1027
+                st.dataframe(st.session_state.data[column])
             elif valores=="Clp-Eur":
-                self.data[columna]=self.data[columna]/1027
+                st.session_state.data[column]=st.session_state.data[column]/1027
+                st.dataframe(st.session_state.data[column])
     
     #especifico del proyecto:
     def get_AnalisisDescriptivo(self, columna):
-        if self.data is not None:
+
             if columna=="Age":
-                st.write("Edad promedio: ",self.data[columna].mean())
-                st.write("Edad mediana: ",self.data[columna].median())
-                st.write("Edad moda: ",self.data[columna].mode()[0])
-                st.write("Edad varianza: ",self.data[columna].var())
-                st.write("Edad desviación estándar: ",self.data[columna].std())
-                st.write("Edad Rango intercuartil: ",self.data[columna].quantile(0.75)-self.data[columna].quantile(0.25))
+                st.write("Edad promedio: ",self.get_mean(columna))
+                st.write("Edad mediana: ",self.get_median(columna))
+                st.write("Edad moda: ",self.get_mode(columna))
+                st.write("Edad varianza: ",self.get_var(columna))
+                st.write("Edad desviación estándar: ",self.get_std(columna))
+                st.write("Edad Rango intercuartil: ",self.get_range(columna))
             elif columna=="Salary":
-                st.write("Salario promedio: ",self.data[columna].mean())
-                st.write("Salario mediana: ",self.data[columna].median())
-                st.write("Salario moda: ",self.data[columna].mode()[0])
-                st.write("Salario varianza: ",self.data[columna].var())
-                st.write("Salario desviación estándar: ",self.data[columna].std())
-                st.write("Salario Rango intercuartil: ",self.data[columna].quantile(0.75)-self.data[columna].quantile(0.25))
-            elif columna=="Country":
-                st.write("País con más registros: ",self.data[columna].mode()[0])
+                st.write("Salario promedio: ",self.get_mean(columna))
+                st.write("Salario mediana: ",self.get_median(columna))
+                st.write("Salario moda: ",self.get_mode(columna))
+                st.write("Salario varianza: ",self.get_var(columna))
+                st.write("Salario desviación estándar: ",self.get_std(columna))
+                st.write("Salario Rango intercuartil: ",self.get_range(columna))
             else:
                 st.write("No se puede realizar análisis descriptivo de esta columna")
-    def get_grafico(self):
-        if self.data is not None:
+    def get_grafico(self,column):
+            
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8))
 
             # Gráfico de barras para 'Salary'
-            if 'Salary' in self.data.columns:
-                ax1.bar(self.data['ID'], self.data['Salary'], alpha=0.7)
+            if 'Salary' in column:
+                ax1.bar(st.session_state.data['ID'], st.session_state.data['Salary'], alpha=0.7)
                 ax1.set_xlabel('ID')
                 ax1.set_ylabel('Salary')
                 ax1.set_title('Gráfico de Barras de Salario')
@@ -149,8 +136,8 @@ class AnalisisDatos:
                 ax1.set_visible(False)  # Ocultar el eje si no hay datos
 
             # Gráfico de barras para 'Age'
-            if 'Age' in self.data.columns:
-                ax2.bar(self.data['ID'], self.data['Age'], alpha=0.7)
+            if 'Age' in column:
+                ax2.bar(st.session_state.data['ID'], st.session_state.data['Age'], alpha=0.7)
                 ax2.set_xlabel('ID')
                 ax2.set_ylabel('Age')
                 ax2.set_title('Gráfico de Barras de Edad')
