@@ -6,10 +6,12 @@ import matplotlib.pyplot as plt
 class AnalisisDatos:
     
     def __init__(self, CsvUploud=None):
-        if CsvUploud:
-            self.data = pd.read_csv(CsvUploud)
+        self.data = CsvUploud
+    def load_data(self):
+        if self.file and self.file.name.endswith('.csv'):
+            st.session_state.data = pd.read_csv(self.file)
         else:
-            self.data = None
+            st.error("Formato de archivo no soportado.")
 
     def get_datos(self):
         return self.data
@@ -43,21 +45,35 @@ class AnalisisDatos:
     def get_valoresnull(self):
         if self.data is not None:
             return self.data.isnull().sum()
-    
-   
-    def cambiarnulos(self, columna, valor,valor_especifico):
+        
+    def get_media(self,columna):
+        if self.data is not None:
+            return self.data[columna].fillna(self.data[columna].mean())
+    def get_moda(self,columna):
+        if self.data is not None:
+            return self.data[columna].fillna(self.data[columna].mode()[0])
+    def get_mediana(self,columna):
+        if self.data is not None:
+            return self.data[columna].fillna(self.data[columna].median())
+        
+    def cambiarnulos(self, columna,valor):
+        # if self.data is not None:
+        #     if columna in self.data.columns:
+        #         self.data[columna].fillna(valor, inplace=True)
+        #         return self.data
+        #     else:
+        #         raise KeyError(f"La columna '{columna}' no existe en el DataFrame.")
+        # else:
+        #     raise ValueError("El DataFrame no ha sido cargado.")
         if self.data is not None:
             ids_nulos = self.data[self.data[columna].isnull()].index.tolist()
             filas_antes = self.data.loc[ids_nulos]
             if valor == "Moda":
-                self.data[columna] = self.data[columna].fillna(self.data[columna].mode()[0])
+                self.data[columna] = self.get_moda(columna)
             elif valor == "Media":
-                self.data[columna] = self.data[columna].fillna(self.data[columna].mean())
+                self.data[columna] = self.get_media(columna)
             elif valor == "Mediana":
-                self.data[columna] = self.data[columna].fillna(self.data[columna].median())
-            elif valor == "Valor específico":
-               
-                self.data[columna] = self.data[columna].fillna(valor_especifico)
+                self.data[columna] = self.get_mediana(columna)
             filas_despues = self.data.loc[ids_nulos]
             return filas_despues
 
@@ -78,7 +94,7 @@ class AnalisisDatos:
                 self.data[columna] = self.data[columna].astype(str)
             elif tipo == "datetime64[ns]":
                 self.data[columna] = self.data[columna].fillna("2021-01-01")
-                self.data[columna] = pd.to_datetime(self.data[columna])            
+                self.data[columna] = pd.to_datetime(self.data[columna], format='mixed')            
             return self.data  
 
     def set_moneda(self, columna):#funcion para cambiar moneda de alguna columna de salario si existe
