@@ -1,6 +1,8 @@
 import pandas as pd
+import seaborn as sns
 import streamlit as st
 import matplotlib.pyplot as plt
+from scipy.stats import pearsonr, spearmanr
 
 class AnalisisDatos:
     def __init__(self, CsvUploud=None):
@@ -200,3 +202,60 @@ class AnalisisDatos:
                 st.write("Cannot generate boxplot for this column.")
         except Exception as e:
             st.error(f"Error al generar boxplot: {e}")
+    def calcular_matriz_correlacion(self):
+        try:
+            if st.session_state.data is not None:
+                numeric_columns = st.session_state.data.select_dtypes(include=['int64', 'float64']).columns
+                return st.session_state.data[numeric_columns].corr()
+            else:
+                st.error("No se han cargado los datos.")
+        except Exception as e:
+            st.error(f"Error al calcular la matriz de correlación: {e}")
+
+    def visualizar_matriz_correlacion(self):
+        try:
+            corr_matrix = self.calcular_matriz_correlacion()
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
+            st.pyplot(plt)
+        except Exception as e:
+            st.error(f"Error al visualizar la matriz de correlación: {e}")
+
+    def graficar_dispersion(self, col1, col2):
+        try:
+            if st.session_state.data is not None:
+                numeric_columns = st.session_state.data.select_dtypes(include=['int64', 'float64']).columns
+                if col1 in numeric_columns and col2 in numeric_columns:
+                    plt.figure(figsize=(10, 6))
+                    sns.scatterplot(x=st.session_state.data[col1], y=st.session_state.data[col2])
+                    plt.xlabel(col1)
+                    plt.ylabel(col2)
+                    plt.title(f'Dispersión entre {col1} y {col2}')
+                    st.pyplot(plt)
+                else:
+                    st.error("Las columnas deben ser numéricas.")
+            else:
+                st.error("No se han cargado los datos.")
+        except Exception as e:
+            st.error(f"Error al graficar la dispersión: {e}")
+
+    def prueba_correlacion(self, col1, col2, metodo='pearson'):
+        try:
+            if st.session_state.data is not None:
+                numeric_columns = st.session_state.data.select_dtypes(include=['int64', 'float64']).columns
+                if col1 in numeric_columns and col2 in numeric_columns:
+                    if metodo == 'pearson':
+                        corr, p_value = pearsonr(st.session_state.data[col1], st.session_state.data[col2])
+                    elif metodo == 'spearman':
+                        corr, p_value = spearmanr(st.session_state.data[col1], st.session_state.data[col2])
+                    else:
+                        raise ValueError("Método no soportado. Use 'pearson' o 'spearman'.")
+                    
+                    st.write(f"Coeficiente de correlación ({metodo}): {corr}")
+                    st.write(f"Valor p: {p_value}")
+                else:
+                    st.error("Las columnas deben ser numéricas.")
+            else:
+                st.error("No se han cargado los datos.")
+        except Exception as e:
+            st.error(f"Error al realizar la prueba de correlación: {e}")

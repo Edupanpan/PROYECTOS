@@ -58,6 +58,25 @@ def menu():
         
         st.divider()
         get_outliers(BD)
+        st.divider()
+        if 'data' in st.session_state:
+            BD = AnalisisDatos(None)
+            
+            st.header("Matrices de Correlación")
+            if st.button("Calcular y Visualizar Matriz de Correlación"):
+                BD.visualizar_matriz_correlacion()
+            
+            st.header("Gráficos de Dispersión")
+            columns = st.session_state.data.columns
+            col1 = st.selectbox("Seleccione la primera columna", columns)
+            col2 = st.selectbox("Seleccione la segunda columna", columns)
+            if st.button("Generar Gráfico de Dispersión"):
+                BD.graficar_dispersion(col1, col2)
+            
+            st.header("Pruebas de Correlación")
+            metodo = st.selectbox("Seleccione el método de correlación", ['pearson', 'spearman'])
+            if st.button("Realizar Prueba de Correlación"):
+                BD.prueba_correlacion(col1, col2, metodo)
 
 def obtenerDatos(BD):
     try:
