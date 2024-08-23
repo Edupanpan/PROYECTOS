@@ -3,8 +3,6 @@ from Funciones import *
 from Clase import *
 
 try:
-    
     menu()
-
 except Exception as e:
-    st.write(e)
+    st.error(f"Error en el menú: {e}")
