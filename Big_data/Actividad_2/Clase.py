@@ -25,26 +25,39 @@ class AnalisisDatos:
     
     def get_describe(self):
         st.dataframe(st.session_state.data.describe())
+
     def get_column_null(self):
-        st.dataframe(st.session_state.data.isnull().sum())
-    def get_valoresnull(self,column):
-        global ID_new
+        null_columns = st.session_state.data.columns[st.session_state.data.isnull().any()]
+        return null_columns
+    
+    def get_cantidad_column_null(self):
+        null_counts = st.session_state.data.isnull().sum()
+        st.dataframe(null_counts[null_counts > 0])
+    
+    def get_valores_null(self,column):
         ID_null=st.session_state.data[st.session_state.data[column].isnull()].index.tolist()
-        ID_new=ID_null
-        st.dataframe(st.session_state.data.loc[ID_null])  
-         
-    def cambiarnulos(self, column,valor):
-            st.dataframe(st.session_state.data.isnull().sum()) 
+        st.dataframe(st.session_state.data.loc[ID_null])
+        
+    
+    def evaluar_edades(self):
+        edades = st.session_state.data[(st.session_state.data['Age'] >= 18) & (st.session_state.data['Age'] <= 80)]
+        st.session_state.data = edades
+    
+    def cambiarnulos(self, valor,column):
             if valor == "Moda":
                 mode=self.get_mode(column)
                 st.session_state.data[column].fillna(mode, inplace=True)
+                
             elif valor == "Media":
                 mean=self.get_mean(column)
                 st.session_state.data[column].fillna(mean, inplace=True)
+                
             elif valor == "Mediana":
                 median=self.get_median(column)
                 st.session_state.data[column].fillna(median, inplace=True)
-            st.dataframe(st.session_state.data.loc[ID_new])
+            
+            
+            
 
     def get_columnas(self):
         st.dataframe(st.session_state.data.columns.values)
@@ -120,37 +133,34 @@ class AnalisisDatos:
                 st.write("Salario Rango intercuartil: ",self.get_range(columna))
             else:
                 st.write("No se puede realizar análisis descriptivo de esta columna")
-    def get_grafico(self,column):
+    
+    def get_grafico(self, column):
+        if st.session_state.data[column].dtype == 'int64' or st.session_state.data[column].dtype == 'float64':
+            plt.hist(st.session_state.data[column], bins='auto')
+            plt.xlabel(column)
+            plt.ylabel('Frequency')
+            plt.title(f'Histogram of {column}')
+            st.pyplot()
+        elif st.session_state.data[column].dtype == 'object':
             
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8))
-            if 'Salary' in column:
-                ax1.bar(st.session_state.data['ID'], st.session_state.data['Salary'], alpha=0.7)
-                ax1.set_xlabel('ID')
-                ax1.set_ylabel('Salary')
-                ax1.set_title('Gráfico de Barras de Salario')
-                ax1.grid(True)
-            else:
-                ax1.set_visible(False)  # Ocultar el eje si no hay datos
-            if 'Age' in column:
-                ax2.bar(st.session_state.data['ID'], st.session_state.data['Age'], alpha=0.7)
-                ax2.set_xlabel('ID')
-                ax2.set_ylabel('Age')
-                ax2.set_title('Gráfico de Barras de Edad')
-                ax2.grid(True)
-            else:
-                ax2.set_visible(False)  # Ocultar el eje si no hay datos
-
-            st.pyplot(fig)# Mostrar los gráficos en Streamlit
-    def get_outlier(self,column):
-        edad=st.session_state.data[column]
-        Q1 = st.session_state.data[column].quantile(0.25)
-        Q3 = st.session_state.data[column].quantile(0.75)
-        IQR = Q3 - Q1
-        lower_bound = Q1 - 1.5 * IQR
-        upper_bound = Q3 + 1.5 * IQR
-        st.dataframe(st.session_state.data[(st.session_state.data[column] < lower_bound) | (st.session_state.data[column] > upper_bound)])
-        fig, ax = plt.subplots()
-        ax.boxplot(edad, vert=False)
-        ax.set_title('Boxplot de edades')
-        ax.set_xlabel('Edad')
-        st.pyplot(fig)
+            value_counts = st.session_state.data[column].value_counts()
+            plt.bar(value_counts.index, value_counts.values)
+            plt.xlabel(column)
+            plt.ylabel('Frequency')
+            plt.title(f'Bar Chart of {column}')
+            plt.xticks(rotation=90)
+            st.pyplot()
+        else:
+            st.write("Cannot plot histogram for non-numeric column.")
+            
+            
+    def get_boxplot_or_frequency(self, column):
+        if st.session_state.data[column].dtype == 'int64':
+            data = st.session_state.data.dropna(subset=[column, 'Age'])
+            plt.boxplot(data[column])
+            plt.xlabel(column)
+            plt.ylabel('Value')
+            plt.title(f'Boxplot of {column}')
+            st.pyplot()
+        else:
+            st.write("Cannot generate boxplot for this column.")

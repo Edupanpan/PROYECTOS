@@ -2,7 +2,7 @@ from Clase import *
 import streamlit as st
 def menu():
     
-    st.title("Limpieza de Datos")
+    st.title("Activad Numero 2 Big Data") 
     
     uploaded_file = st.file_uploader("Carga tu archivo CSV", type=["csv"])
     
@@ -12,45 +12,53 @@ def menu():
 
     if 'data' in st.session_state:
         BD = AnalisisDatos(None)
-        with st.sidebar:
-            st.header("Menú")
-            
-            
-            opc = st.selectbox("Seleccione una opción", ["Base de datos", "Primeras Filas", "Últimas Filas"])
-            if st.button("Ver Datos"):
-                if opc == "Base de datos":
-                    obtenerDatos(BD)
-                elif opc == "Primeras Filas":
-                    obtenerHead(BD)
-                elif opc == "Últimas Filas":
-                    obtenerTail(BD)
-            
-            st.divider()
-            opc = st.selectbox("Seleccione una opción", [ "Descripción de la Base de Datos"])
-            if st.button("Ver Información"):    
+        
+        st.title("MENU DE FUNCIONES")
+        
+        st.header("VIsualización de Datos")
+        opc = st.selectbox("", ["Base de datos", "Primeras Filas", "Últimas Filas"])
+        if st.button("Ver Datos"):
+            if opc == "Base de datos":
+                obtenerDatos(BD)
+            elif opc == "Primeras Filas":
+                obtenerHead(BD)
+            elif opc == "Últimas Filas":
+                obtenerTail(BD)
+        
+        st.divider()
+        st.header("Información General")
+        if st.button("Ver Información 'sucia'"):    
+            obtenerDescribe(BD)
                 
-                if opc == "Descripción de la Base de Datos":
-                    obtenerDescribe(BD)
-                    
-            st.divider()
+        st.divider()
+        st.title("Limpieza de Datos")
+        st.header("Paso 1: Valores Faltantes")
+        valoresNull(BD)
+        
+        
+        st.divider()
+        st.header("Paso 2: Limpiar edades")
+        if st.button("Limpiar edades"):
+            st.write("modificado con exito") 
+            BD.evaluar_edades()
+        
+        st.divider()
+        st.header("Paso 3: Cambio de tipo de datos")
+        Cambio_tipo(BD)
 
-            valoresNull(BD)
-            
-            
-            st.divider()
-            Cambio_tipo(BD)
+        st.divider()
+        st.header("Paso opcional: Cambio de moneda")
+        cambioMoneda(BD)
 
-            st.divider()
-            cambioMoneda(BD)
+        st.divider()
+        st.header("Paso 4: Medidas de Tendencia Central")
+        MedidasTendencia(BD)
 
-            st.divider()
-            MedidasTendencia(BD)
-
-            st.divider()
-            get_grafico(BD)
-            
-            st.divider()
-            get_outliers(BD)
+        st.divider()
+        get_grafico(BD)
+        
+        st.divider()
+        get_outliers(BD)
                 
             
                 
@@ -78,16 +86,18 @@ def obtenerDescribe(BD):
 
 def valoresNull(BD):
     st.write("Valores faltantes:")
-    BD.get_column_null()
+    BD.get_cantidad_column_null()
     
-    column= st.session_state.data.columns
-    column = st.selectbox("Selecciona columna a remplazar", column)
-    if st.button("Ver valores nulos"):
-        BD.get_valoresnull(column)
+    columns= BD.get_column_null()
+    column=st.selectbox("Selecciona columna a remplazar", columns)
+    BD.get_valores_null(column)
     valor = st.selectbox("Reemplaza datos faltantes con su media", ["Moda","Media","Mediana"])
     if st.button("Cambiar valores nulos"):
-        BD.cambiarnulos(column,valor)
-    
+        if column in st.session_state.data.columns:
+            st.write("modificado con exito")
+            BD.cambiarnulos(valor, column)
+        else:
+            st.error(f"La columna {column} no existe en el DataFrame.")
     
 
 def Cambio_tipo(BD):
@@ -98,6 +108,7 @@ def Cambio_tipo(BD):
     tipo = st.selectbox("Seleccione un tipo de datos", ["", "int", "float", "object", "datetime64[ns]"])
     if st.button("Cambiar tipo de dato"):
         BD.cambioTipo(column, tipo)
+        st.write("Modificado con exito")
 
 def cambioMoneda(BD):
     st.write("Cambio de Moneda")
@@ -125,5 +136,5 @@ def get_outliers(BD):
     columns= st.session_state.data.columns
     column = st.selectbox("Seleccione una columna para detectar outliers",columns)
     if st.button("Detectar Outliers"):
-        BD.get_outlier(column)
+        BD.get_boxplot_or_frequency(column)
     
