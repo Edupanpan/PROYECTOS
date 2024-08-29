@@ -174,7 +174,7 @@ class AnalisisDatos:
                 plt.hist(st.session_state.data[column], bins='auto')
                 plt.xlabel(column)
                 plt.ylabel('Frequency')
-                plt.title(f'Histogram of {column}')
+                plt.title(f'Histogra {column}')
                 st.pyplot()
             elif st.session_state.data[column].dtype == 'object':
                 value_counts = st.session_state.data[column].value_counts()
