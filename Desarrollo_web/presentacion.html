@@ -47,6 +47,28 @@
             <h1 class="text-center">PRESENTACION</h1>
         </article>
     </main>
+    <script>
+        // Función para obtener los parámetros de la URL
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                contacto: params.get('contacto'),
+                duda: params.get('duda')
+            };
+        }
+
+        // Mostrar los datos en el div
+        function mostrarDatos() {
+            const params = getQueryParams();
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = `
+                <p><strong>Contacto:</strong> ${decodeURIComponent(params.contacto)}</p>
+                <p><strong>Duda a consultar:</strong> ${decodeURIComponent(params.duda)}</p>
+            `;
+        }
+
+        mostrarDatos(); // Llama a la función para mostrar los datos
+    </script>
 </body>
 
 </html>
