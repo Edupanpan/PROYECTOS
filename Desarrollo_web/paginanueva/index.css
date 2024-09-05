@@ -52,3 +52,6 @@ aside a:hover{
     background-color: var(--text-color);
     color: var(--gradient-color-1);
 }
+article{
+    color: var(--text-color);
+}
