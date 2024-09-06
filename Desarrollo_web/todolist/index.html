@@ -6,36 +6,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APP TO DO LIST</title>  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="index.css">
     </head>
-    <body>
-        <header>
+    <body class="container">
+        <header class="perfil">
+            <div id="fecha"></div>
             <h1>To Do List</h1>
             <span>Este es un planificador de tus cosas pendientes</span>
         </header>
         
         <main>
             <div id="entrada">
-                <input type="text" id="input" placeholder="Ingresa la tarea">
-                <button type="button" onclick="ingresar()">Ingresar</button>
+                <input type="text" id="input" placeholder="Ingresa la tarea" onkeypress="if(event.key === 'Enter') ingresar()">
+                <i id="boton-enter" class="fas fa-plus-circle" onclick="ingresar()"></i>
             </div>
             
-            <div id="lista" >
-                
+            <div id="lista">
             </div>
         </main>    
         <script>
+            let id = 0; // Variable para asignar un id único a cada tarea
+            const check = 'fa-check-circle';
+            const uncheck = 'fa-circle';
+            const lineThrough = 'line-through';
+        
             function ingresar() {
                 var texto = document.getElementById("input");
-                var tareas = document.getElementById("lista");
-                
+                var lista = document.getElementById("lista");
+        
                 if (texto.value !== "") {
-                    var taskItem = document.createElement("span");
-                    taskItem.textContent = texto.value;
-                    lista.appendChild(taskItem);
+                    const tarea = texto.value;
+                    const REALIZADO = uncheck;
+                    const LINE = '';
+                    const item = `
+                        <li id="elemento">
+                            <i class="far ${REALIZADO}" data="realizado" id="${id}"></i>
+                            <p class="text ${LINE}">${tarea}</p>
+                            <i class="fas fa-trash de" data="eliminado" id="${id}"></i> 
+                        </li>
+                    `;
+                    lista.insertAdjacentHTML("beforeend", item);
                     texto.value = "";
+                    id++;
+        
+                    // Añadir event listeners a los nuevos iconos
+                    const newCheckIcon = document.getElementById(id - 1);
+                    newCheckIcon.addEventListener('click', toggleRealizado);
+        
+                    const newTrashIcon = newCheckIcon.nextElementSibling.nextElementSibling;
+                    newTrashIcon.addEventListener('click', eliminar);
                 }
             }
+        
+            function toggleRealizado(event) {
+                const element = event.target;
+                if (element.classList.contains(uncheck)) {
+                    element.classList.remove(uncheck);
+                    element.classList.add(check);
+                    element.parentNode.querySelector('.text').classList.add(lineThrough);
+                } else {
+                    element.classList.remove(check);
+                    element.classList.add(uncheck);
+                    element.parentNode.querySelector('.text').classList.remove(lineThrough);
+                }
+            }
+        
+            function eliminar(event) {
+                const element = event.target;
+                element.parentNode.remove();
+            }
+        
+            // Añadir event listeners a los iconos existentes al cargar la página
+            document.querySelectorAll('.fa-circle, .fa-check-circle').forEach(icon => {
+                icon.addEventListener('click', toggleRealizado);
+            });
+            document.querySelectorAll('.fa-trash').forEach(icon => {
+                icon.addEventListener('click', eliminar);
+            });
         </script>
     </body>
 </html>

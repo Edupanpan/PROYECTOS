@@ -6,63 +6,63 @@
     --color-texto: white;
     --color-elemento: #ff99cc;
 }
-html *{
-    margin: 0;
-    font-family: 'press start 2p', cursive;
-}
+
 body {
     margin: 0;
-    background: linear-gradient(to bottom,var(--color-fondo), var(--color-gradiente));
+    background: linear-gradient(to bottom, var(--color-fondo), var(--color-gradiente));
     height: 100vh;
+    font-family: 'Press Start 2P', cursive;
 }
+
 header {
-    padding:20px ;
+    padding: 20px;
     height: 10vh;
     background: var(--color-elemento);
     color: var(--color-texto);
     text-align: center;
     width: 100%;
 }
+
 main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
 }
+
 #entrada {
     display: flex;
-    justify-content: center ;
+    justify-content: center;
     width: 70%;
     margin: 20px;
-    
 }
+
 #lista {
     display: flex;
     flex-direction: column;
-    
     width: 70%;
     border-radius: 5px;
     margin: 10px;
 }
-#lista span {
-    background: var(--color-elemento);
-    border-radius: 5px;
-    margin: 5px;
-    padding: 10px;
-    width: 100%;
+
+#lista li {
     display: flex;
-    justify-content: center;
-} 
-input[type="text"] {
-    border: 1px solid var(--color-elemento);
-    border-radius: 5px;
-    margin: 5px;
-    padding: 10px; ;
-}
-button {
+    align-items: center;
+    justify-content: space-between;
     background: var(--color-elemento);
-    border: none;
     border-radius: 5px;
-    color: var(--color-texto);
+    padding: 10px;
+    margin: 5px 0;
+}
+
+#lista .text {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.line-through {
+    text-decoration: line-through;
+}
+
+.far, .fas {
     cursor: pointer;
 }
