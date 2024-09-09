@@ -1,89 +1,90 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APP TO DO LIST</title>  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="index.css">
-    </head>
-    <body class="container">
-        <header class="perfil">
-            <div id="fecha"></div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body class="m-0">
+    <header class="container-fluid ">
+        <div class="container d-flex flex-column justify-content-center align-items-center py-4">
             <h1>To Do List</h1>
             <span>Este es un planificador de tus cosas pendientes</span>
-        </header>
-        
-        <main>
-            <div id="entrada">
-                <input type="text" id="input" placeholder="Ingresa la tarea" onkeypress="if(event.key === 'Enter') ingresar()">
-                <i id="boton-enter" class="fas fa-plus-circle" onclick="ingresar()"></i>
+        </div>
+    </header>
+
+    <main class="container d-flex flex-column align-items-center mt-4">
+        <div class="row justify-content-center w-100">
+            <div class="col-12 col-md-7"> 
+                <div id="entrada" class="d-flex mb-5 justify-content-center">
+                    <div class="input-group">
+                        <input class="form-control me-2" type="text" id="input" placeholder="Ingresa la tarea" onkeypress="if(event.key === 'Enter') ingresar()">
+                        <button class="btn btn-primary" type="button" onclick="ingresar()"><i class="fas fa-plus-circle"></i></button>
+                    </div>                        
+                </div>
+                
+                <ul id="lista" class="list-group "></ul>
             </div>
-            
-            <div id="lista">
-            </div>
-        </main>    
-        <script>
-            let id = 0; // Variable para asignar un id único a cada tarea
-            const check = 'fa-check-circle';
-            const uncheck = 'fa-circle';
-            const lineThrough = 'line-through';
-        
-            function ingresar() {
-                var texto = document.getElementById("input");
-                var lista = document.getElementById("lista");
-        
-                if (texto.value !== "") {
-                    const tarea = texto.value;
-                    const REALIZADO = uncheck;
-                    const LINE = '';
-                    const item = `
-                        <li id="elemento">
-                            <i class="far ${REALIZADO}" data="realizado" id="${id}"></i>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        let id = 0;
+        const check = 'fa-check-circle';
+        const uncheck = 'fa-circle';
+        const lineThrough = 'line-through';
+    
+        function ingresar() {
+            var texto = document.getElementById("input");
+            var lista = document.getElementById("lista");
+    
+            if (texto.value !== "") {
+                const tarea = texto.value;
+                const REALIZADO = uncheck;
+                const LINE = '';
+                const item = `
+                    <li id="elemento-${id}" class="list-group-item mb-2">
+                        <div class="d-flex justify-content-around align-items-center">    
+                            <i class="far ${REALIZADO}" data="realizado" id="check-${id}"></i>
                             <p class="text ${LINE}">${tarea}</p>
-                            <i class="fas fa-trash de" data="eliminado" id="${id}"></i> 
-                        </li>
-                    `;
-                    lista.insertAdjacentHTML("beforeend", item);
-                    texto.value = "";
-                    id++;
-        
-                    // Añadir event listeners a los nuevos iconos
-                    const newCheckIcon = document.getElementById(id - 1);
-                    newCheckIcon.addEventListener('click', toggleRealizado);
-        
-                    const newTrashIcon = newCheckIcon.nextElementSibling.nextElementSibling;
-                    newTrashIcon.addEventListener('click', eliminar);
-                }
+                            <i class="fas fa-trash de" data="eliminado" id="delete-${id}"></i> 
+                        </div>
+                    </li>
+                `;
+                lista.insertAdjacentHTML("beforeend", item);
+                texto.value = "";
+                id++;
+    
+                const newCheckIcon = document.getElementById(`check-${id - 1}`);
+                newCheckIcon.addEventListener('click', toggleRealizado);
+    
+                const newTrashIcon = document.getElementById(`delete-${id - 1}`);
+                newTrashIcon.addEventListener('click', eliminar);
             }
-        
-            function toggleRealizado(event) {
-                const element = event.target;
-                if (element.classList.contains(uncheck)) {
-                    element.classList.remove(uncheck);
-                    element.classList.add(check);
-                    element.parentNode.querySelector('.text').classList.add(lineThrough);
-                } else {
-                    element.classList.remove(check);
-                    element.classList.add(uncheck);
-                    element.parentNode.querySelector('.text').classList.remove(lineThrough);
-                }
+        }
+    
+        function toggleRealizado(event) {
+            const element = event.target;
+            if (element.classList.contains(uncheck)) {
+                element.classList.remove(uncheck);
+                element.classList.add(check);
+                element.parentNode.querySelector('.text').classList.add(lineThrough);
+            } else {
+                element.classList.remove(check);
+                element.classList.add(uncheck);
+                element.parentNode.querySelector('.text').classList.remove(lineThrough);
             }
-        
-            function eliminar(event) {
-                const element = event.target;
-                element.parentNode.remove();
-            }
-        
-            // Añadir event listeners a los iconos existentes al cargar la página
-            document.querySelectorAll('.fa-circle, .fa-check-circle').forEach(icon => {
-                icon.addEventListener('click', toggleRealizado);
-            });
-            document.querySelectorAll('.fa-trash').forEach(icon => {
-                icon.addEventListener('click', eliminar);
-            });
-        </script>
-    </body>
+        }
+    
+        function eliminar(event) {
+            const element = event.target;
+            element.closest('li').remove();
+        }
+    </script>
+</body>
 </html>
