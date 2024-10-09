@@ -1,0 +1,47 @@
+
+.d-flex {
+    display: flex;
+  }
+  
+  .vh-100 {
+    height: 100vh;
+  }
+  
+  .m-auto {
+    margin: auto;
+  }
+  
+  .align-self-center {
+    align-self: center;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .display-4 {
+    font-size: 3rem;
+  }
+  
+  .lead {
+    display: block; 
+    width: 100%; 
+    padding: 20px;
+    border-bottom: 1px solid #ddd; 
+  }
+  
+  .lead h2 {
+    margin-bottom: 10px; 
+  }
+  
+  .lead img {
+    max-width: 100%; 
+    height: auto; 
+  }
+  ul.list-unstyled {
+    display: block; 
+    padding: 0; 
+  }
+h1{
+  color: white;
+}  
