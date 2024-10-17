@@ -1,0 +1,58 @@
+body {
+    background-color:#dfdbdb;
+    background-size: contain;
+    height: 100vh;
+    color: black;
+}
+.display-4 {
+    font-size: 3rem;
+  }
+  
+.lead {
+    font-size: 1.5rem;
+    
+  }
+.greetings{
+    font-size: 7rem;
+    font-weight: 900;
+}
+.greetings > span{
+    animation: glow 2.5s ease-in-out infinite;
+}
+@keyframes glow{
+    0%, 100%{
+        color: #F2C9BB;
+        text-shadow: 0 0 12px #BF8275, 0 0 50px #BF8275, 0 0 100px #BF8275;
+    }
+    10%, 90%{
+        color: #59271C;
+        text-shadow: none;
+    }
+}
+.greetings > span:nth-child(2){
+    animation-delay: .2s ;
+}
+.greetings > span:nth-child(3){
+    animation-delay: .4s ;
+}
+.greetings > span:nth-child(4){
+    animation-delay: .6s;
+}
+.greetings > span:nth-child(5){
+    animation-delay: .8s;
+}
+.greetings > span:nth-child(6){
+    animation-delay: 1s;
+}
+.greetings > span:nth-child(7){
+    animation-delay: 1.2s;
+}
+.greetings > span:nth-child(8){
+    animation-delay: 1.4s;
+}
+.greetings > span:nth-child(9){
+    animation-delay: 1.6s;
+}
+.greetings > span:nth-child(10){
+    animation-delay: 1.8s;
+}
